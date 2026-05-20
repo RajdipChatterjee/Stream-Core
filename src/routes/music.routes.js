@@ -1,8 +1,10 @@
 const express = require('express');
 
-const musicRoutes = express.Router();
+const router = express.Router();
 
 
-musicRoutes.post('/upload', ()=>{
-
+router.post('/upload', ()=>{
+    
 })
+
+module.exports = router;
