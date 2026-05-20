@@ -4,16 +4,18 @@ const bcrypt = require('bcryptjs');
 
 async function registerUser(req, res) {
     const {username, email, password, role='user'} = req.body;
-
+    
     const usernameAlreadyExists = await userModel.findOne({
         $or: [
             {username},
             {email}
         ]
     })
+    
+    // return res.status(200).json({message: "Reached"});
 
     if(usernameAlreadyExists) {
-        return res.status(409).json({message: "User Already Exits"});
+        return res.status(409).json({message: "User Already Exists"});
     }
 
     const hash = await bcrypt.hash(password, 10);
