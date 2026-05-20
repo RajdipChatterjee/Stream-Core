@@ -12,3 +12,5 @@ async function uploadMusic() {
 }
 
 console.log(response);
+
+module.exports = uploadMusic;
