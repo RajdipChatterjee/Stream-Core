@@ -10,4 +10,6 @@ const router = express.Router();
 
 router.post('/upload', upload.single("file"), musicController.createMusic)
 
+router.post('/album', musicController.createAlbum)
+
 module.exports = router;
