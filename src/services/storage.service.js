@@ -4,13 +4,16 @@ const client = new ImageKit({
   privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
 });
 
-async function uploadMusic() {
+async function uploadFile(file) {
     const response = await client.files.upload({
-      file: fs.createReadStream('path/to/file'),
-      fileName: 'file-name.jpg',
+      file,
+      fileName: "music_" + Date.now(),
+      folder: "back-end/music"
     });
+
+    return response;
 }
 
-console.log(response);
+// console.log(response);
 
-module.exports = uploadMusic;
+module.exports = { uploadFile };

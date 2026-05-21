@@ -12,6 +12,6 @@ app.get('/', (req, res) => {
 })
 
 app.use('/api/auth', authRoutes);
-app.use('/pi/music', musicRoutes);
+app.use('/api/music', musicRoutes);
 
 module.exports = app;
