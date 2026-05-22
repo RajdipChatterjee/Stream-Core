@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const musicModel = require('../models/music.model');
 
 async function connectDB() {
     try {
