@@ -55,6 +55,7 @@ async function createAlbum(req, res) {
    try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       
+      
       if (decoded.role != 'artist') {
          return res.status(403).json({message: "You don't have access to create an album"});
       }
@@ -63,7 +64,7 @@ async function createAlbum(req, res) {
 
       const album = await albumModel.create({
          title,
-         artist: decoded.id,
+         artist: decoded._id,
          musics: musics
       })
 
@@ -73,7 +74,7 @@ async function createAlbum(req, res) {
             id: album._id,
             title:album.title,
             artist: album.artist,
-            music: album.musics
+            musics: album.musics
          }
       })
    } catch(err) {
