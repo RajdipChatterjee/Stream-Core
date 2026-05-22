@@ -53,7 +53,7 @@ async function createAlbum(req, res) {
    }
 
    try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
       
       
       if (decoded.role != 'artist') {
