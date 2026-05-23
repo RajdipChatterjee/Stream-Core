@@ -1,0 +1,21 @@
+# Dependency directories
+node_modules/
+
+# Compiled output (if you use TypeScript or Babel)
+dist/
+build/
+
+# Jest coverage output
+coverage/
+
+# Environment variables
+.env
+.env.*
+
+# Logs
+logs
+*.log
+
+# Package lock files (Prettier shouldn't touch these)
+package-lock.json
+yarn.lock

@@ -85,11 +85,11 @@ IMAGEKIT_PRIVATE_KEY=your_imagekit_private_key
 
 Variable details:
 
-| Variable | Description |
-| --- | --- |
-| `PORT` | Port where the Express server will run |
-| `MONGO_URI` | MongoDB connection string |
-| `JWT_SECRET_KEY` | Secret used to sign and verify JWT tokens |
+| Variable               | Description                                |
+| ---------------------- | ------------------------------------------ |
+| `PORT`                 | Port where the Express server will run     |
+| `MONGO_URI`            | MongoDB connection string                  |
+| `JWT_SECRET_KEY`       | Secret used to sign and verify JWT tokens  |
 | `IMAGEKIT_PRIVATE_KEY` | ImageKit private key used for file uploads |
 
 ### Running the Server
@@ -224,10 +224,10 @@ Required role: `artist`
 
 Form fields:
 
-| Field | Type | Description |
-| --- | --- | --- |
-| `title` | text | Music title |
-| `file` | file | Music/audio file to upload |
+| Field   | Type | Description                |
+| ------- | ---- | -------------------------- |
+| `title` | text | Music title                |
+| `file`  | file | Music/audio file to upload |
 
 Example using curl:
 

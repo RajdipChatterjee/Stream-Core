@@ -1,12 +1,12 @@
-const musicModel = require("../models/music.model");
-const albumModel = require("../models/album.model");
-const { uploadFile } = require("../services/storage.service");
+const musicModel = require('../models/music.model');
+const albumModel = require('../models/album.model');
+const { uploadFile } = require('../services/storage.service');
 
 async function createMusic(req, res) {
   const title = req.body.title;
   const file = req.file;
 
-  const result = await uploadFile(file.buffer.toString("base64"));
+  const result = await uploadFile(file.buffer.toString('base64'));
 
   const music = await musicModel.create({
     uri: result.url,
@@ -15,7 +15,7 @@ async function createMusic(req, res) {
   });
 
   res.status(201).json({
-    message: "Music created successfully",
+    message: 'Music created successfully',
     music: {
       id: music._id,
       uri: music.uri,
@@ -35,7 +35,7 @@ async function createAlbum(req, res) {
   });
 
   res.status(201).json({
-    message: "Album created successfully",
+    message: 'Album created successfully',
     album: {
       id: album._id,
       title: album.title,
@@ -45,37 +45,49 @@ async function createAlbum(req, res) {
   });
 }
 
-
 async function getAllMusics(req, res) {
-
   // const musics = await musicModel.find().skip(1).limit(1).populate('artist', 'username email');
-  const musics = await musicModel.find().limit(10).populate('artist', 'username email');
+  const musics = await musicModel
+    .find()
+    .limit(10)
+    .populate('artist', 'username email');
 
   res.status(200).json({
-    message: "Musics fetched successfully",
-    musics: musics
-  })
+    message: 'Musics fetched successfully',
+    musics: musics,
+  });
 }
 
 async function getAllAlbums(req, res) {
-
-  const albums = await albumModel.find().select("title artist").populate('artist', 'username email').populate('musics');
+  const albums = await albumModel
+    .find()
+    .select('title artist')
+    .populate('artist', 'username email')
+    .populate('musics');
 
   res.status(200).json({
-    message: "Albums fetched successfully",
-    albums: albums
-  })
+    message: 'Albums fetched successfully',
+    albums: albums,
+  });
 }
 
 async function getAlbumById(req, res) {
   const albumId = req.params.albumId;
 
-  const album = await albumModel.findById(albumId).populate("artist", "username email");
+  const album = await albumModel
+    .findById(albumId)
+    .populate('artist', 'username email');
 
   return res.status(200).json({
-    message: "Album fetched successfully",
-    album: album
-  })
+    message: 'Album fetched successfully',
+    album: album,
+  });
 }
 
-module.exports = { createMusic, createAlbum, getAllMusics, getAllAlbums, getAlbumById };
+module.exports = {
+  createMusic,
+  createAlbum,
+  getAllMusics,
+  getAllAlbums,
+  getAlbumById,
+};

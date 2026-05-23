@@ -1,15 +1,26 @@
 {
   "name": "streamcore",
   "version": "1.0.0",
-  "description": "",
+  "description": "Spotify-style backend API with JWT authentication, music uploads, and album management",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "test": "jest --setupFiles dotenv/config",
+    "test:watch": "jest --watchAll --setupFiles dotenv/config"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "nodejs",
+    "express",
+    "mongodb",
+    "jwt",
+    "backend",
+    "rest-api"
+  ],
+  "author": "Rajdip Chatterjee",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
@@ -24,8 +35,13 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "cross-env": "^10.1.0",
     "eslint": "^10.4.0",
+    "eslint-config-prettier": "^10.1.8",
     "globals": "^17.6.0",
-    "nodemon": "^3.1.14"
+    "jest": "^30.4.2",
+    "nodemon": "^3.1.14",
+    "prettier": "^3.8.3",
+    "supertest": "^7.2.2"
   }
 }
