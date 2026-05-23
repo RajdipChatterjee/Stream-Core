@@ -1,16 +1,21 @@
 # StreamCore
 
-StreamCore is a simple Spotify-style backend API built with Node.js, Express, MongoDB, and Mongoose. It supports user authentication, artist-only music uploads, album creation, and authenticated music/album browsing.
+StreamCore is a Spotify-style backend REST API built with Node.js, Express,
+MongoDB, and Mongoose. It provides cookie-based JWT authentication, role-based
+access control, music uploads through ImageKit, album management, and basic test,
+lint, and formatting tooling.
 
 ## Features
 
 - User registration, login, and logout
 - JWT authentication stored in an HTTP cookie named `token`
-- User roles: `user` and `artist`
+- Role-based access for `user` and `artist`
 - Artist-only music upload endpoint
-- ImageKit storage integration for uploaded music files
+- In-memory file handling with Multer before uploading to ImageKit
 - Album creation with linked music tracks
-- Protected endpoints for listing music and albums
+- Authenticated music and album browsing
+- Jest and Supertest setup for API tests
+- ESLint and Prettier configuration for code quality and formatting
 
 ## Tech Stack
 
@@ -22,59 +27,70 @@ StreamCore is a simple Spotify-style backend API built with Node.js, Express, Mo
 - bcryptjs
 - cookie-parser
 - multer
-- ImageKit
+- ImageKit Node SDK
+- Jest
+- Supertest
+- ESLint
+- Prettier
+- Nodemon
 
 ## Project Structure
 
 ```text
-Stream-Core/
-|-- server.js
+StreamCore/
+|-- .env.example
+|-- .gitignore
+|-- .prettierignore
+|-- .prettierrc
+|-- eslint.config.mjs
+|-- jest.config.js
 |-- package.json
-|-- src/
-|   |-- app.js
-|   |-- controllers/
-|   |   |-- auth.controller.js
-|   |   `-- music.controller.js
-|   |-- db/
-|   |   `-- db.js
-|   |-- middlewares/
-|   |   `-- auth.middleware.js
-|   |-- models/
-|   |   |-- album.model.js
-|   |   |-- music.model.js
-|   |   `-- user.model.js
-|   |-- routes/
-|   |   |-- auth.routes.js
-|   |   `-- music.routes.js
-|   `-- services/
-|       `-- storage.service.js
-`-- README.md
+|-- package-lock.json
+|-- README.md
+|-- server.js
+`-- src/
+    |-- app.js
+    |-- controllers/
+    |   |-- auth.controller.js
+    |   `-- music.controller.js
+    |-- db/
+    |   `-- db.js
+    |-- middlewares/
+    |   `-- auth.middleware.js
+    |-- models/
+    |   |-- album.model.js
+    |   |-- music.model.js
+    |   `-- user.model.js
+    |-- routes/
+    |   |-- auth.routes.js
+    |   `-- music.routes.js
+    |-- services/
+    |   `-- storage.service.js
+    `-- tests/
+        `-- app.test.js
 ```
 
 ## Getting Started
 
 ### Prerequisites
 
-Install these before running the project:
-
 - Node.js
 - npm
 - MongoDB database, local or hosted
-- ImageKit account/private key for file uploads
+- ImageKit private key for file uploads
 
 ### Installation
 
-Clone the repository and install dependencies:
-
 ```bash
 git clone <repository-url>
-cd Stream-Core
+cd StreamCore
 npm install
 ```
 
 ### Environment Variables
 
-Create a `.env` file in the project root:
+Create a `.env` file in the project root. You can use `.env.example` as the
+starting point:
 
 ```env
 PORT=3000
@@ -83,36 +99,46 @@ JWT_SECRET_KEY=your_jwt_secret_key
 IMAGEKIT_PRIVATE_KEY=your_imagekit_private_key
 ```
 
-Variable details:
+| Variable               | Description                               |
+| ---------------------- | ----------------------------------------- |
+| `PORT`                 | Port where the Express server will run    |
+| `MONGO_URI`            | MongoDB connection string                 |
+| `JWT_SECRET_KEY`       | Secret used to sign and verify JWT tokens |
+| `IMAGEKIT_PRIVATE_KEY` | ImageKit private key for file uploads     |
 
-| Variable               | Description                                |
-| ---------------------- | ------------------------------------------ |
-| `PORT`                 | Port where the Express server will run     |
-| `MONGO_URI`            | MongoDB connection string                  |
-| `JWT_SECRET_KEY`       | Secret used to sign and verify JWT tokens  |
-| `IMAGEKIT_PRIVATE_KEY` | ImageKit private key used for file uploads |
+## Running The Project
 
-### Running the Server
-
-Start the server in production mode:
+Start the server:
 
 ```bash
 npm start
 ```
 
-Start the server in development mode with nodemon:
+Start the server in development mode with Nodemon:
 
 ```bash
 npm run dev
 ```
 
-The API will be available at:
+By default, the API runs at:
 
 ```text
 http://localhost:3000
 ```
 
-If you use a different `PORT`, replace `3000` with your configured port.
+If you configure a different `PORT`, use that port instead.
+
+## Available Scripts
+
+| Script                 | Description                                       |
+| ---------------------- | ------------------------------------------------- |
+| `npm start`            | Runs `server.js` with Node                        |
+| `npm run dev`          | Runs `server.js` with Nodemon                     |
+| `npm test`             | Runs Jest tests with dotenv config loaded         |
+| `npm run test:watch`   | Runs Jest in watch mode with dotenv config loaded |
+| `npm run lint`         | Runs ESLint across the project                    |
+| `npm run format`       | Formats files with Prettier                       |
+| `npm run format:check` | Checks formatting without modifying files         |
 
 ## API Reference
 
@@ -122,7 +148,11 @@ If you use a different `PORT`, replace `3000` with your configured port.
 GET /
 ```
 
-Returns a simple HTML response from the server.
+Returns a simple HTML response:
+
+```html
+<h1>Hello from Node JS server</h1>
+```
 
 ## Authentication
 
@@ -149,7 +179,7 @@ Request body:
 Notes:
 
 - `role` is optional.
-- Default role is `user`.
+- The default role is `user`.
 - Accepted roles are `user` and `artist`.
 - A successful registration creates a `token` cookie.
 
@@ -205,13 +235,22 @@ Successful response:
 POST /api/auth/logout
 ```
 
-Clears the authentication cookie.
+Clears the `token` cookie.
+
+Successful response:
+
+```json
+{
+  "message": "User logged out successfully"
+}
+```
 
 ## Music And Albums
 
 Music routes are mounted at `/api/music`.
 
-These endpoints require a valid `token` cookie. Upload and album creation require the authenticated user to have the `artist` role.
+These endpoints require a valid `token` cookie. Upload and album creation also
+require the authenticated user to have the `artist` role.
 
 ### Upload Music
 
@@ -222,14 +261,12 @@ Content-Type: multipart/form-data
 
 Required role: `artist`
 
-Form fields:
-
 | Field   | Type | Description                |
 | ------- | ---- | -------------------------- |
 | `title` | text | Music title                |
 | `file`  | file | Music/audio file to upload |
 
-Example using curl:
+Example:
 
 ```bash
 curl -X POST http://localhost:3000/api/music/upload \
@@ -292,7 +329,8 @@ GET /api/music
 
 Required role: `user` or `artist`
 
-Returns up to 10 music records with artist details populated.
+Returns up to 10 music records with `username` and `email` populated for each
+artist.
 
 ### Get All Albums
 
@@ -312,36 +350,18 @@ GET /api/music/albums/:albumId
 
 Required role: `user` or `artist`
 
-Returns one album by MongoDB document ID.
+Returns one album by MongoDB document ID with artist details populated.
 
 ## Authentication Flow
 
 1. Register or log in through `/api/auth/register` or `/api/auth/login`.
-2. The server signs a JWT and stores it in a cookie named `token`.
-3. Protected routes read the token from cookies.
-4. Artist routes check that the decoded token has `role: "artist"`.
+2. The server signs a JWT containing the user ID and role.
+3. The JWT is stored in a cookie named `token`.
+4. Protected routes read and verify the token from cookies.
+5. Artist-only routes require the decoded token to have `role: "artist"`.
 
-When testing in Postman, Insomnia, or a browser, keep cookies enabled so protected requests include the `token` cookie automatically.
-
-## Available Scripts
-
-```bash
-npm start
-```
-
-Runs the server with Node.
-
-```bash
-npm run dev
-```
-
-Runs the server with nodemon for development.
-
-```bash
-npm test
-```
-
-Currently configured as a placeholder and does not run automated tests.
+When testing in Postman, Insomnia, or a browser, keep cookies enabled so
+protected requests include the `token` cookie automatically.
 
 ## Data Models
 
@@ -352,7 +372,7 @@ Currently configured as a placeholder and does not run automated tests.
   username: String,
   email: String,
   password: String,
-  role: "user" | "artist"
+  role: 'user' | 'artist'
 }
 ```
 
@@ -376,10 +396,43 @@ Currently configured as a placeholder and does not run automated tests.
 }
 ```
 
+## Testing
+
+The project uses Jest with the Node test environment and Supertest for HTTP
+endpoint testing. The current test suite includes a health check test for
+`GET /`.
+
+Run tests with:
+
+```bash
+npm test
+```
+
+Run tests in watch mode with:
+
+```bash
+npm run test:watch
+```
+
+## Code Quality
+
+ESLint is configured through `eslint.config.mjs` with Node, browser, and Jest
+globals. Prettier is configured through `.prettierrc`, and generated or
+environment-specific files are ignored through `.prettierignore`.
+
+Useful commands:
+
+```bash
+npm run lint
+npm run format
+npm run format:check
+```
+
 ## Notes
 
-- Uploaded music files are stored through ImageKit.
+- Uploaded music files are stored in ImageKit under the `back-end/music` folder.
+- Multer uses memory storage, so files are read from memory before upload.
 - Passwords are hashed with bcrypt before being saved.
 - JWTs are signed with `JWT_SECRET_KEY`.
-- The API currently uses cookie-based authentication only.
-- Automated tests are not configured yet.
+- Authentication currently uses cookies only.
+- MongoDB connection is started from `server.js` when the HTTP server starts.
